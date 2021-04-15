@@ -1,7 +1,8 @@
 # kls_Anonymization
-k anonymization with l diversity and s similarity using pandas and csv input file.
+Protecting a k anonymized and l diversified numerical dataset from semantic similarity related exploitations using class expansion/aggregation.
 
-Implementation of k anonymization with l diversity and protecting the dataset from semantic similarity related exploitations using class expansion/aggregation.
+Implementation of  k anonymization with l diversity and s similarity using pandas and csv input file.
+
 
 Two special similarity parameters(parameter s1: representing probability of duplicate sensitive values inside a class
 and parameter s2: representing minimum relative standard deviation inside a class) are used to determine similarity index and 
