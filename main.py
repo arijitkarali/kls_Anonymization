@@ -22,6 +22,7 @@ row_count = len(df.index)
 new_index = list(range(0, row_count))
 s = pd.Series(new_index)
 df.set_index([s], inplace=True)
+# print(type(s[0]))
 print(df)
 
 
@@ -53,15 +54,26 @@ def make_kls_anonymize(mydf, k, ld, s1, s2, dfsize):
             j = 0
         else:
             j += 1
+    partitions.append(dfsize)
     return partitions
 
 
-for i in df['NAME']:
-  df = df.replace([i], '***')
-
-df['AGE'] = pd.cut(x=df['AGE'], bins=[20, 25, 30, 35, 40])
-print(df)
+for i in df[fully_suppressedID]:                                        # suppressing 'NAME'
+    df = df.replace([i], '***')
 
 df_class_partitions = make_kls_anonymize(df, k, ld, s1, s2, row_count)  # finding equivalence classes
-print(df_class_partitions)                                              # partitioning done
 
+print("\npartitions based on k=4, l=3 are\n")
+print(df_class_partitions)                                              # partitioning done
+print("\n")
+
+df[QID] = df[QID].astype('string')
+
+begin_index = 0
+for x in df_class_partitions:                                           # generalizing QID 'age'
+    min_val = df[QID].iloc[begin_index]
+    max_val = df[QID].iloc[x-1]
+    df[QID].iloc[begin_index:x] = min_val + '-' + max_val
+    begin_index = x
+
+print(df)
