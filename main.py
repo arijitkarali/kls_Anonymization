@@ -56,6 +56,12 @@ def make_kls_anonymize(mydf, k, ld, s1, s2, dfsize):
     return partitions
 
 
+for i in df['NAME']:
+  df = df.replace([i], '***')
+
+df['AGE'] = pd.cut(x=df['AGE'], bins=[20, 25, 30, 35, 40])
+print(df)
+
 df_class_partitions = make_kls_anonymize(df, k, ld, s1, s2, row_count)  # finding equivalence classes
 print(df_class_partitions)                                              # partitioning done
 
