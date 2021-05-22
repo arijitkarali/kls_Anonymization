@@ -33,8 +33,13 @@ def is_l_diverse(mydf, ld):
         return False
 
 
-def is_s_similar(mydf, s1, s2):    # *** implementation pending ***
-    return True
+def is_s_similar(mydf, s1, s2):
+    s1prob = (len(mydf)-len(mydf[sensitive_col].unique()))/len(mydf)   # calculating duplicate prob
+    s2prob = mydf[sensitive_col].std()/mydf[sensitive_col].mean()  # calculating coefficient of variation
+    if (s1prob < s1) and (s2prob > s2):
+        return True
+    else:
+        return False
 
 
 def make_kls_anonymize(mydf, k, ld, s1, s2, dfsize):
