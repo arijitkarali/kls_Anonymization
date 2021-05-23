@@ -7,23 +7,21 @@ ld = 3  # (default diversity parameter)
 s1 = 0.5  # (default 1st similarity parameter or duplicate probability parameter)
 s2 = 0.1  # (default 2nd similarity parameter or coefficient of variation parameter)
 
-
 sensitive_col = 'SALARY'        # this is the column based on which kls anonymization is carried out
 QID = 'AGE'                     # a numerical quasi identifier that will be generalized
 fully_suppressedID = 'NAME'     # the columns to be suppressed fully
-partly_suppressedID = 'ZIP'     # the columns to be suppressed partially
+partly_suppressedID = 'ORGANIZATION'     # the columns to be suppressed partially
 
 # taking input csv
-names = ('NAME', 'AGE', 'GENDER', 'ZIP', 'SALARY')
-df = pd.read_csv('sampledata.csv', names=names, index_col=False)
+names = ('NAME', 'AGE', 'GENDER', 'ETHNICITY', 'JOBTITLE', 'ORGANIZATION', 'SALARY')
+df = pd.read_csv('new_sal_data.csv', names=names, index_col=False)
+df[sensitive_col] = pd.to_numeric(df[sensitive_col])
 df = df.sort_values(by=[QID])
 
 row_count = len(df.index)
 new_index = list(range(0, row_count))
 s = pd.Series(new_index)
 df.set_index([s], inplace=True)
-# print(type(s[0]))
-print(df)
 
 
 def is_l_diverse(mydf, ld):
@@ -66,6 +64,9 @@ def make_kls_anonymize(mydf, k, ld, s1, s2, dfsize):
 for i in df[fully_suppressedID]:                                        # suppressing 'NAME'
     df = df.replace([i], '***')
 
+for i in df[partly_suppressedID]:                                        # suppressing 'org'
+    df = df.replace([i], i[0:3]+'***')
+
 df_class_partitions = make_kls_anonymize(df, k, ld, s1, s2, row_count)  # finding equivalence classes
 
 print("\npartitions based on k=4, l=3 are\n")
@@ -76,9 +77,14 @@ df[QID] = df[QID].astype('string')
 
 begin_index = 0
 for x in df_class_partitions:                                           # generalizing QID 'age'
-    min_val = df[QID].iloc[begin_index]
-    max_val = df[QID].iloc[x-1]
+    min_val = int(df[QID].iloc[begin_index])
+    max_val = int(df[QID].iloc[x-1])
+    if max_val == min_val:
+        max_val += 1
+        min_val -= 1
+    max_val = str(max_val)
+    min_val = str(min_val)
     df[QID].iloc[begin_index:x] = min_val + '-' + max_val
     begin_index = x
 
-print(df)
+df.to_excel("anonymized.xlsx")
