@@ -62,7 +62,7 @@ def make_kls_anonymize(mydf, k, ld, s1, s2, dfsize):
 
 
 for i in df[fully_suppressedID]:                                        # suppressing 'NAME'
-    df = df.replace([i], '***')
+    df = df.replace([i], '*****')
 
 for i in df[partly_suppressedID]:                                        # suppressing 'org'
     df = df.replace([i], i[0:3]+'***')
@@ -82,6 +82,7 @@ for x in df_class_partitions:                                           # genera
     if max_val == min_val:
         max_val += 1
         min_val -= 1
+
     max_val = str(max_val)
     min_val = str(min_val)
     df[QID].iloc[begin_index:x] = min_val + '-' + max_val
